@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react'
-import {useGLTF, PerspectiveCamera} from 'drei'
-import { useBox } from 'use-cannon'
+import React, { useState, useEffect } from 'react'
+import {useGLTF} from 'drei'
+import { useCylinder, useBox } from 'use-cannon'
 
 export default function PicModel(props) {
   const { nodes, materials } = useGLTF('/3d/PIC3D-draco.glb');
@@ -11,11 +11,16 @@ export default function PicModel(props) {
     hairs: '#1e0508'
   });
 
-  materials['SSS White Marble'].color.set(colors.skin);
-  materials['Material #4'].color.set(colors.dress);
-  materials['Material #2'].color.set(colors.hairs);
+  useEffect(()=>{
+    // set initial colors to model materials
+    materials['SSS White Marble'].color.set(colors.skin);
+    materials['Material #4'].color.set(colors.dress);
+    materials['Material #2'].color.set(colors.hairs);
+  }, []);
 
-  const [ref] = useBox(() => ({ mass: 0, ...props }))
+
+
+  const [ref] = useBox(() => ({ mass: 1, args:[1,3.9,1], ...props }))
   return (
     <group ref={ref} {...props} dispose={null}>
       <primitive object={nodes.BN_R_Thigh} />

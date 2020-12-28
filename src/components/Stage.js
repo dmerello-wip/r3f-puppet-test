@@ -3,7 +3,7 @@ import { Canvas, useFrame } from 'react-three-fiber'
 import { Physics } from 'use-cannon'
 import PicModel from './PicModel'
 import Floor from './Floor'
-import { OrbitControls } from 'drei'
+import { OrbitControls  } from 'drei'
 
 
 export default function App() {
