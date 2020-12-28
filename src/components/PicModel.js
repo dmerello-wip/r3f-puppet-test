@@ -8,18 +8,20 @@ import { TweenMax, Strong, Power2 } from "gsap";
 export default function PicModel(props) {
   const { nodes, materials } = useGLTF('/3d/PIC3D-draco.glb');
 
-  const [colors, setColors] = useState({
+  const colors = {
     skin: '#ff9a78',
     dress: '#223851',
     hairs: '#1e0508'
-  });
+  };
+
+  const [dressColor, setDressColor] = useState(colors.dress);
 
   useEffect(()=>{
     // set initial colors to model materials (i don't like native ones)
     materials['SSS White Marble'].color.set(colors.skin);
-    materials['Material #4'].color.set(colors.dress);
+    materials['Material #4'].color.set(dressColor);
     materials['Material #2'].color.set(colors.hairs);
-  }, []);
+  }, [dressColor]);
 
   const [ref, api] = useBox(() => ({ mass: 0.5, args:[1,3.85,1], ...props }));
   const HandRightRef = useRef();
@@ -37,6 +39,8 @@ export default function PicModel(props) {
     api.velocity.set(0, 4, 0);
     // hands moving
     handsAnimation();
+    // change dress color
+    setDressColor(getRandomColor());
   };
 
   const handsAnimation = () => {
@@ -61,6 +65,15 @@ export default function PicModel(props) {
       }
     });
   };
+
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 
   return (
     <group ref={ref} onClick={hitHandler}>
