@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import {useGLTF} from 'drei'
-import {useBox } from 'use-cannon'
+import { useGLTF } from 'drei'
+import { useBox } from 'use-cannon'
 import { useFrame } from "react-three-fiber"
+import { TweenMax, Strong, Power2 } from "gsap";
+
 
 export default function PicModel(props) {
   const { nodes, materials } = useGLTF('/3d/PIC3D-draco.glb');
@@ -13,27 +15,55 @@ export default function PicModel(props) {
   });
 
   useEffect(()=>{
-    // set initial colors to model materials
+    // set initial colors to model materials (i don't like native ones)
     materials['SSS White Marble'].color.set(colors.skin);
     materials['Material #4'].color.set(colors.dress);
     materials['Material #2'].color.set(colors.hairs);
   }, []);
 
-  const [ref] = useBox(() => ({ mass: 1, args:[1,3.85,1], ...props }));
+  const [ref, api] = useBox(() => ({ mass: 0.5, args:[1,3.85,1], ...props }));
   const HandRightRef = useRef();
   const HandLeftRef = useRef();
   const HeadRef = useRef();
 
   useFrame((state) => {
-    const t = state.clock.getElapsedTime()
-    HandLeftRef.current.position.y = -1 + (Math.sin(t) / 6);
-    HandRightRef.current.position.y = -1 + (Math.sin(t) / 6);
+    const t = state.clock.getElapsedTime();
+    // Head constant animation
     HeadRef.current.rotation.z =  (Math.sin(t) / 6);
   });
 
+  const hitHandler = ()=>{
+    // all the model jumps
+    api.velocity.set(0, 4, 0);
+    // hands moving
+    handsAnimation();
+  };
+
+  const handsAnimation = () => {
+    let handsPos = {
+      x : HandLeftRef.current.position.x,
+      y : HandLeftRef.current.position.y,
+    };
+    let handsAni = TweenMax.to(handsPos, 0.5, {
+      x : 0.7,
+      y : -0.5,
+      ease: Power2.easeOut,
+      onUpdate: () => {
+        // left hand
+        HandLeftRef.current.position.x = handsPos.x;
+        HandLeftRef.current.position.y = handsPos.y;
+        // rigth hand
+        HandRightRef.current.position.x = -handsPos.x;
+        HandRightRef.current.position.y = handsPos.y;
+      },
+      onComplete: () => {
+        handsAni.reverse();
+      }
+    });
+  };
 
   return (
-    <group ref={ref}  >
+    <group ref={ref} onClick={hitHandler}>
       <primitive object={nodes.BN_R_Thigh} />
       <primitive object={nodes.BN_SPine_01} />
       <primitive object={nodes.BN_L_Thigh} />
