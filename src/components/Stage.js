@@ -3,22 +3,34 @@ import { Canvas, useFrame } from 'react-three-fiber'
 import { Physics } from 'use-cannon'
 import PicModel from './PicModel'
 import Floor from './Floor'
-import { OrbitControls  } from 'drei'
+import { PerspectiveCamera, OrbitControls  } from 'drei'
 
 
-export default function App() {
+export default function Stage() {
+
+  const ambientColor = '#d67a0c';
+
   return (
     <div className="stage">
-      <Canvas shadowMap camera={{ position: [0, 0, 5], far: 50 }}>
+      <Canvas shadowMap>
         <ambientLight intensity={0.3}/>
-        <spotLight intensity={1} position={[30, 30, 50]} angle={0.2} penumbra={1} castShadow />
+        <fog attach="fog" args={[ambientColor, 0, 25]} />
+        <spotLight intensity={0.8} position={[30, 30, 70]} angle={0.1} penumbra={1} castShadow />
         <Physics>
           <Suspense fallback={null}>
             <PicModel />
           </Suspense>
           <Floor position={[0,-3,0]}/>
         </Physics>
-        <OrbitControls/>
+        {/*<OrbitControls/>*/}
+        <PerspectiveCamera
+          makeDefault
+          position={[0, -1.5, 5]}
+          rotation={[0, 0, 0]}
+          far={50}
+        >
+          <mesh />
+        </PerspectiveCamera>
       </Canvas>
     </div>
   )

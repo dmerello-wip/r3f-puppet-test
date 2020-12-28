@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {useGLTF} from 'drei'
-import { useCylinder, useBox } from 'use-cannon'
+import {useBox } from 'use-cannon'
+import { useFrame } from "react-three-fiber"
 
 export default function PicModel(props) {
   const { nodes, materials } = useGLTF('/3d/PIC3D-draco.glb');
@@ -18,56 +19,85 @@ export default function PicModel(props) {
     materials['Material #2'].color.set(colors.hairs);
   }, []);
 
+  const [ref] = useBox(() => ({ mass: 1, args:[1,3.85,1], ...props }));
+  const HandRightRef = useRef();
+  const HandLeftRef = useRef();
+  const HeadRef = useRef();
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime()
+    HandLeftRef.current.position.y = -1 + (Math.sin(t) / 6);
+    HandRightRef.current.position.y = -1 + (Math.sin(t) / 6);
+    HeadRef.current.rotation.z =  (Math.sin(t) / 6);
+  });
 
 
-  const [ref] = useBox(() => ({ mass: 1, args:[1,4,1], ...props }))
   return (
-    <group ref={ref} {...props} >
+    <group ref={ref}  >
       <primitive object={nodes.BN_R_Thigh} />
       <primitive object={nodes.BN_SPine_01} />
       <primitive object={nodes.BN_L_Thigh} />
         <mesh
+          ref={HandRightRef}
           castShadow
           material={materials['SSS White Marble']}
           geometry={nodes.G_PIC_R_Hand.geometry}
           position={[-0.4, -1, 0]}
         />
         <mesh
+          ref={HandLeftRef}
           castShadow
           material={materials['SSS White Marble']}
           geometry={nodes.G_PIC_L_Hand.geometry}
           position={[0.4, -1, 0]}
         />
-      <mesh
-        castShadow
-        material={materials['Material #2']}
-        geometry={nodes.G_PIC_Hair.geometry}
-        position={[0, -0.02, 0]}
-        rotation={[-0.1, 0.2, 0]}
-        scale={[1, 1, 1]}
-      />
-      <mesh
-        castShadow
-        material={materials['Material #2']}
-        geometry={nodes.G_PIC_R_Eyebrow.geometry}
-        position={[-0.25, 0.26, 0.39]}
-        rotation={[1.08, 0.34, 0.46]}
-      />
-      <mesh
-        castShadow
-        material={materials['Material #2']}
-        geometry={nodes.G_PIC_L_Eyebrow.geometry}
-        position={[0.26, 0.26, 0.39]}
-        rotation={[1.08, -0.34, 2.68]}
-        scale={[1, -1, 1]}
-      />
-      <mesh
-        castShadow
-        material={materials['SSS White Marble']}
-        geometry={nodes.G_PIC_Head.geometry}
-        position={[0, 0, 0]}
-        rotation={[0, 0.2, 0]}
-      />
+      <group ref={HeadRef} >
+        <mesh
+          castShadow
+          material={materials['Material #2']}
+          geometry={nodes.G_PIC_Hair.geometry}
+          position={[0, -0.02, 0]}
+          rotation={[-0.1, 0.2, 0]}
+          scale={[1, 1, 1]}
+        />
+        <mesh
+          castShadow
+          material={materials['Material #2']}
+          geometry={nodes.G_PIC_R_Eyebrow.geometry}
+          position={[-0.25, 0.26, 0.39]}
+          rotation={[1.08, 0.34, 0.46]}
+        />
+        <mesh
+          castShadow
+          material={materials['Material #2']}
+          geometry={nodes.G_PIC_L_Eyebrow.geometry}
+          position={[0.26, 0.26, 0.39]}
+          rotation={[1.08, -0.34, 2.68]}
+          scale={[1, -1, 1]}
+        />
+        <mesh
+          castShadow
+          material={materials['SSS White Marble']}
+          geometry={nodes.G_PIC_Head.geometry}
+          position={[0, 0, 0]}
+          rotation={[0, 0.2, 0]}
+        />
+        <mesh
+          castShadow
+          material={materials['Material #3']}
+          geometry={nodes.G_PIC_L_Eye.geometry}
+          position={[0.22, 0.15, 0.46]}
+          rotation={[1.31, 0, -0.44]}
+          scale={[1, 0.43, 1]}
+        />
+        <mesh
+          castShadow
+          material={materials['Material #3']}
+          geometry={nodes.G_PIC_R_Eye.geometry}
+          position={[-0.22, 0.15, 0.46]}
+          rotation={[1.31, 0, 0.44]}
+        />
+      </group>
       <skinnedMesh
         castShadow
         material={materials['Material #4']}
@@ -75,21 +105,6 @@ export default function PicModel(props) {
         skeleton={nodes.G_PIC_Body.skeleton}
         position={[0, -0.92, 0]}
         rotation={[0, 0, 0]}
-      />
-      <mesh
-        castShadow
-        material={materials['Material #3']}
-        geometry={nodes.G_PIC_L_Eye.geometry}
-        position={[0.22, 0.15, 0.46]}
-        rotation={[1.31, 0, -0.44]}
-        scale={[1, 0.43, 1]}
-      />
-      <mesh
-        castShadow
-        material={materials['Material #3']}
-        geometry={nodes.G_PIC_R_Eye.geometry}
-        position={[-0.22, 0.15, 0.46]}
-        rotation={[1.31, 0, 0.44]}
       />
       <skinnedMesh
         castShadow
