@@ -20,23 +20,26 @@ export default function PicModel(props) {
 
 
 
-  const [ref] = useBox(() => ({ mass: 1, args:[1,3.9,1], ...props }))
+  const [ref] = useBox(() => ({ mass: 1, args:[1,4,1], ...props }))
   return (
-    <group ref={ref} {...props} dispose={null}>
+    <group ref={ref} {...props} >
       <primitive object={nodes.BN_R_Thigh} />
       <primitive object={nodes.BN_SPine_01} />
       <primitive object={nodes.BN_L_Thigh} />
         <mesh
+          castShadow
           material={materials['SSS White Marble']}
           geometry={nodes.G_PIC_R_Hand.geometry}
           position={[-0.4, -1, 0]}
         />
         <mesh
+          castShadow
           material={materials['SSS White Marble']}
           geometry={nodes.G_PIC_L_Hand.geometry}
           position={[0.4, -1, 0]}
         />
       <mesh
+        castShadow
         material={materials['Material #2']}
         geometry={nodes.G_PIC_Hair.geometry}
         position={[0, -0.02, 0]}
@@ -44,12 +47,14 @@ export default function PicModel(props) {
         scale={[1, 1, 1]}
       />
       <mesh
+        castShadow
         material={materials['Material #2']}
         geometry={nodes.G_PIC_R_Eyebrow.geometry}
         position={[-0.25, 0.26, 0.39]}
         rotation={[1.08, 0.34, 0.46]}
       />
       <mesh
+        castShadow
         material={materials['Material #2']}
         geometry={nodes.G_PIC_L_Eyebrow.geometry}
         position={[0.26, 0.26, 0.39]}
@@ -57,12 +62,14 @@ export default function PicModel(props) {
         scale={[1, -1, 1]}
       />
       <mesh
+        castShadow
         material={materials['SSS White Marble']}
         geometry={nodes.G_PIC_Head.geometry}
         position={[0, 0, 0]}
         rotation={[0, 0.2, 0]}
       />
       <skinnedMesh
+        castShadow
         material={materials['Material #4']}
         geometry={nodes.G_PIC_Body.geometry}
         skeleton={nodes.G_PIC_Body.skeleton}
@@ -70,6 +77,7 @@ export default function PicModel(props) {
         rotation={[0, 0, 0]}
       />
       <mesh
+        castShadow
         material={materials['Material #3']}
         geometry={nodes.G_PIC_L_Eye.geometry}
         position={[0.22, 0.15, 0.46]}
@@ -77,12 +85,14 @@ export default function PicModel(props) {
         scale={[1, 0.43, 1]}
       />
       <mesh
+        castShadow
         material={materials['Material #3']}
         geometry={nodes.G_PIC_R_Eye.geometry}
         position={[-0.22, 0.15, 0.46]}
         rotation={[1.31, 0, 0.44]}
       />
       <skinnedMesh
+        castShadow
         material={materials['Material #4']}
         geometry={nodes.G_PIC_L_Leg.geometry}
         skeleton={nodes.G_PIC_L_Leg.skeleton}
@@ -91,6 +101,7 @@ export default function PicModel(props) {
         scale={[1, -1, 1]}
       />
       <skinnedMesh
+        castShadow
         material={materials['Material #4']}
         geometry={nodes.G_PIC_R_Leg.geometry}
         skeleton={nodes.G_PIC_R_Leg.skeleton}
