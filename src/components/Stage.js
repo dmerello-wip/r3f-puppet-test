@@ -1,14 +1,15 @@
-import React, { Suspense, useRef, useState } from 'react'
-import { Canvas, useFrame } from 'react-three-fiber'
+import React, { Suspense } from 'react'
+import { Canvas } from 'react-three-fiber'
 import { Physics } from 'use-cannon'
 import PicModel from './PicModel'
 import Floor from './Floor'
-import { PerspectiveCamera, OrbitControls  } from 'drei'
+import DefaultCamera from './Camera'
 
 
 export default function Stage() {
 
   const ambientColor = '#d67a0c';
+
 
   return (
     <div className="stage">
@@ -20,17 +21,9 @@ export default function Stage() {
           <Suspense fallback={null}>
             <PicModel />
           </Suspense>
-          <Floor position={[0,-3,0]}/>
+          <Floor position={[0,-4,0]}/>
         </Physics>
-        {/*<OrbitControls/>*/}
-        <PerspectiveCamera
-          makeDefault
-          position={[0, -1.5, 5]}
-          rotation={[0, 0, 0]}
-          far={50}
-        >
-          <mesh />
-        </PerspectiveCamera>
+        <DefaultCamera/>
       </Canvas>
     </div>
   )
