@@ -1,5 +1,7 @@
 body {
   background: #d67a0c;
+  padding: 0;
+  margin: 0;
 }
 
 .stage {
@@ -8,13 +10,4 @@ body {
   left:0;
   width: 100%;
   height:100%;
-}
-
-.main {
-  position: relative;
-  margin: 1rem auto;
-  width: 90%;
-  max-width: 1400px;
-  font-family: 'Helvetica', sans-serif;
-  color: white;
 }

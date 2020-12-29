@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useGLTF } from 'drei'
 import { useBox } from 'use-cannon'
 import { useFrame } from "react-three-fiber"
-import { TweenMax, Strong, Power2 } from "gsap";
+import { TweenMax, Power2 } from "gsap";
 
 
 export default function PicModel(props) {

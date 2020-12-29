@@ -5,9 +5,6 @@ function App() {
   return (
     <>
       <Stage/>
-      <div className="main">
-        <h1>Ciao!</h1>
-      </div>
     </>
   );
 }
