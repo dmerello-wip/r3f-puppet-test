@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useGLTF } from 'drei'
 import { useBox } from 'use-cannon'
 import { useFrame } from "react-three-fiber"
@@ -8,10 +8,21 @@ import { TweenMax, Power2 } from "gsap";
 export default function PicModel(props) {
   const { nodes, materials } = useGLTF('/3d/PIC3D-draco.glb');
 
-  const colors = {
+  const colors = useMemo(()=>({
     skin: '#ff9a78',
     dress: '#223851',
     hairs: '#1e0508'
+  }), []);
+
+  const handInitialPosition = {
+    left: {
+      x: 0.4,
+      y: -1
+    },
+    right: {
+      x: -0.4,
+      y: -1
+    }
   };
 
   const [dressColor, setDressColor] = useState(colors.dress);
@@ -21,12 +32,13 @@ export default function PicModel(props) {
     materials['SSS White Marble'].color.set(colors.skin);
     materials['Material #4'].color.set(dressColor);
     materials['Material #2'].color.set(colors.hairs);
-  }, [dressColor]);
+  }, [dressColor, colors, materials]);
 
-  const [ref, api] = useBox(() => ({ mass: 0.5, args:[1,3.85,1], ...props }));
+  const [ref, api] = useBox(() => ({ mass: 1, args:[1,3.85,1], ...props }));
   const HandRightRef = useRef();
   const HandLeftRef = useRef();
   const HeadRef = useRef();
+  let handsAni = null;
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
@@ -36,40 +48,50 @@ export default function PicModel(props) {
 
   const hitHandler = ()=>{
     // all the model jumps
-    api.velocity.set(0, 4, 0);
+    api.velocity.set(0, 3, 0);
     // hands moving
+    if(handsAni) handsAni.kill();
     handsAnimation();
     // change dress color
     setDressColor(getRandomColor());
   };
 
-  const handsAnimation = () => {
-    let handsPos = {
+  const handsAnimation = (reverse) => {
+    let handsPos =  {
       x : HandLeftRef.current.position.x,
       y : HandLeftRef.current.position.y,
     };
-    let handsAni = TweenMax.to(handsPos, 0.5, {
+    let targetPos = (!reverse) ? {
       x : 0.7,
       y : -0.5,
+    } : {
+      x : handInitialPosition.left.x,
+      y : handInitialPosition.left.y,
+    } ;
+    handsAni = TweenMax.to(handsPos, 0.5, {
+      x : targetPos.x,
+      y : targetPos.y,
       ease: Power2.easeOut,
       onUpdate: () => {
         // left hand
         HandLeftRef.current.position.x = handsPos.x;
         HandLeftRef.current.position.y = handsPos.y;
-        // rigth hand
+        // right hand
         HandRightRef.current.position.x = -handsPos.x;
         HandRightRef.current.position.y = handsPos.y;
       },
       onComplete: () => {
-        handsAni.reverse();
+        if(!reverse) {
+          handsAnimation(true);
+        }
       }
     });
   };
 
   function getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
+    let letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
       color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
@@ -85,14 +107,14 @@ export default function PicModel(props) {
           castShadow
           material={materials['SSS White Marble']}
           geometry={nodes.G_PIC_R_Hand.geometry}
-          position={[-0.4, -1, 0]}
+          position={[handInitialPosition.right.x, handInitialPosition.right.y, 0]}
         />
         <mesh
           ref={HandLeftRef}
           castShadow
           material={materials['SSS White Marble']}
           geometry={nodes.G_PIC_L_Hand.geometry}
-          position={[0.4, -1, 0]}
+          position={[handInitialPosition.left.x, handInitialPosition.left.y, 0]}
         />
       <group ref={HeadRef} >
         <mesh
